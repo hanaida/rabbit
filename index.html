@@ -632,7 +632,8 @@ function renderButtons() {
     btn0Wrapper.style.justifyContent = "center";
     btn0Wrapper.style.alignItems = "center";
     btn0Wrapper.style.marginBottom = "-75px"; 
-    btn0Wrapper.style.marginLeft = "36px"; // 0번 버튼을 36px 오른쪽으로 이동
+    btn0Wrapper.style.position = "relative"; 
+    btn0Wrapper.style.left = "36px"; // 0번 버튼을 36px 오른쪽으로 이동
 
     let btn0 = document.createElement("button");
     btn0.innerText = "0";
@@ -649,6 +650,7 @@ function renderButtons() {
 
     container.appendChild(rowBottom);
 }
+
 
 
 
