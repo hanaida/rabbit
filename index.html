@@ -1,0 +1,779 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>떡치기</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            height: 100vh;
+        }
+        #timer-bar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 20px;
+            background-color: red;
+            transition: none;
+        }
+        #game-container {
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-start;
+            align-items: center;
+            padding-top: 50px;
+        }
+        #output {
+            font-size: 24px;
+            font-weight: bold;
+            margin-bottom: 20px;
+        }
+        .game-button {
+            width: 60px;
+            height: 60px;
+            font-size: 24px;
+            padding: 10px;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            
+            transform: scale(1.2);
+            margin: 5px; /* 버튼 간 여백 추가 */
+        }
+
+
+        .button-1 {
+            background-image: url('1번.png');
+            background-size: cover;
+            background-position: center;
+            border: none;
+            outline: none;
+            box-shadow: none;
+            color: transparent;
+        }
+
+        .button-2 {
+            background-image: url('2번.png');
+            background-size: cover;
+            background-position: center;
+            border: none;
+            outline: none;
+            box-shadow: none;
+            color: transparent;
+        }
+
+        .button-3 {
+            background-image: url('3번.png');
+            background-size: cover;
+            background-position: center;
+            border: none;
+            outline: none;
+            box-shadow: none;
+            color: transparent;
+        }
+
+        .button-0 {
+
+            background-image: url('0번.png');
+            background-size: cover;
+            background-position: center;
+            border: none;
+            outline: none;
+            box-shadow: none;
+            color: transparent;
+            position: relative;
+            left: -15px;
+            outline: none; /* 포커스 시 외곽선 제거 */
+            box-shadow: none; /* 그림자 제거 */
+        }
+
+        .pattern {
+            position: relative;
+            display: inline-block;
+            width: 26px; /* 기존 24px → 26px (좌우 간격 증가) */
+            text-align: center;
+            margin-right: 4px; /* 숫자 사이 간격 증가 */
+            margin-bottom: 12px; /* 기존보다 약간만 아래쪽 간격 증가 */
+            font-size: 0;
+        }
+
+        .pattern::after {
+            content: "";
+            position: absolute;
+            bottom: 0px; /* 숫자 자리에 배치 */
+            left: 50%;
+            transform: translateX(-50%);
+            width: 34px;  /* 작은 원 크기 */
+            height: 34px;
+            border-radius: 50%; /* 원형 */
+        }
+
+        /* 숫자별 원 색상 지정 */
+        .pattern[data-value="1"]::after {
+            background-color: #0047AB; /* 파란색 */
+        }
+        .pattern[data-value="2"]::after {
+            background-color: yellowgreen; /* 녹색 */
+        }
+        .pattern[data-value="3"]::after {
+            background-color: #FF69B4; /* 핑크색 */
+        }
+        .pattern[data-value="0"]::after {
+            background-color: teal; /* 청록색 */
+        }
+
+        /* 기존 스타일에 추가 */
+        .correct::after {
+            filter: brightness(200%);
+            opacity: 0.6;
+            border: 2px solid #00aa00; /* 진한 초록색 테두리 */
+            box-shadow: 0 0 10px rgba(0, 255, 0, 0.8); /* 밝은 초록색 테두리 강조 효과 */
+        }
+
+
+
+.game-button {
+    width: 60px;
+    height: 60px;
+    font-size: 24px;
+    padding: 10px;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    
+    transform: scale(1.2);
+}
+
+        .correct {
+            color: lightgray;
+        }
+        #button-container {
+            position: fixed;
+            bottom: 70px; /*전체 버튼 위치 조정*/
+            left: 50%;
+            transform: translateX(-50%);
+        }
+        #start-buttons {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 10px;
+            margin-top: 0px;
+        }
+#play-count {
+    margin-bottom: 0px; /* 기본 값보다 줄여서 간격 조정 */
+}
+
+#output {
+    margin-top: 0px; /* 기본 값보다 줄여서 간격 조정 */
+}
+    </style>
+</head>
+<body>
+    <div id="timer-bar"></div>
+    <h1>떡치기</h1>
+
+    <div id="start-buttons">
+    <p id="user-info">사용자 정보를 불러오는 중...</p>
+    <button onclick="startGame()">게임 시작</button>
+    <p id="play-count">플레이 기록 불러오는 중...</p> <!-- 추가된 문구 -->
+</div>
+    
+    <div id="game-container">
+        <p id="output">랭킹 불러오는 중...</p>
+        <div id="button-container" class="game-buttons"></div>
+    </div>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.4.0/firebase-app.js";
+        import { getFirestore, setDoc, getDoc, doc, collection, query, orderBy, limit, getDocs } from "https://www.gstatic.com/firebasejs/11.4.0/firebase-firestore.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyC1RCO59Qr1ogsZ1GNwxY9O2KGgMaFMyUM",
+            authDomain: "mafia-5c957.firebaseapp.com",
+            databaseURL: "https://mafia-5c957-default-rtdb.firebaseio.com",
+            projectId: "mafia-5c957",
+            storageBucket: "mafia-5c957.firebasestorage.app",
+            messagingSenderId: "979859367108",
+            appId: "1:979859367108:web:6f94ed2e25ca82d762d591"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+        let rowNumbers = document.createElement("div");
+rowNumbers.style.display = "flex";
+rowNumbers.style.justifyContent = "space-between";
+rowNumbers.style.gap = "400px";  // 버튼 사이에 20px 간격 추가
+rowNumbers.style.position = "relative";
+rowNumbers.style.top = "100px"; // 원하는 만큼 올리기
+
+// rowNumbers.style.width = "180px"; // 고정 폭 제거 또는 주석 처리
+
+
+
+        let gameActive = false;
+        let round = 0;
+        let currentAnswer = "";
+        let inputSequence = "";
+        let colorsPig = ["1", "2", "3"];
+        let timer;
+        let nickname = localStorage.getItem("nickname");
+
+        function promptNickname() {
+            if (!nickname) {
+                nickname = prompt("닉네임을 입력하세요:");
+                if (!nickname) {
+                    alert("닉네임을 입력해야 합니다.");
+                    return false;
+                }
+                localStorage.setItem("nickname", nickname);
+            }
+            return true;
+        }
+
+
+async function loadPlayCount() {
+    const historyRef = collection(db, "game_history");
+    const now = new Date();
+    const past24Hours = new Date(now.getTime() - 24 * 60 * 60 * 1000);
+
+    // 24시간 내 플레이 횟수 조회
+    const lastDayQuery = query(historyRef, orderBy("play_time", "desc"));
+    const lastDaySnapshot = await getDocs(lastDayQuery);
+
+    let last24HoursCount = 0;
+    let totalCount = lastDaySnapshot.size;
+
+    lastDaySnapshot.forEach((doc) => {
+        const playTime = new Date(doc.data().play_time);
+        if (playTime >= past24Hours) {
+            last24HoursCount++;
+        }
+    });
+
+    document.getElementById("play-count").innerHTML = 
+    `24시간 동안 <span style="color: red;">총 ${last24HoursCount}회</span> 플레이되었습니다.<br>
+    지금까지 <span style="color: red;">총 ${totalCount}회</span> 플레이되었습니다.`;
+}
+
+// 페이지 로드 시 플레이 횟수 정보 불러오기
+loadPlayCount();
+
+
+
+        let rankingCache = "랭킹 불러오는 중..."; // 랭킹을 임시로 저장하는 변수
+
+async function loadRanking() {
+    const rankingRef = collection(db, "game_results");
+    const rankingQuery = query(rankingRef, orderBy("round", "desc"), limit(5));
+    const rankingSnapshot = await getDocs(rankingQuery);
+
+    rankingCache = rankingSnapshot.empty 
+        ? "아직 랭킹 정보가 없습니다."
+        : `<span style="color: red; font-weight: bold; font-size: 35px;">명예의 전당</span><br>
+           <span style="color: black; font-size: 12px;">랭킹 보상(일요일 지급) - 1위 : 깜주 2-3위 : 깜엽 4-5위 : 주엽</span><br><br>` + 
+        Array.from(rankingSnapshot.docs, (doc, index) => 
+            `${index + 1}위: ${doc.data().nickname} - ${doc.data().round} round`
+        ).join("<br>");
+
+    if (!gameActive) {
+        document.getElementById("output").innerHTML = rankingCache;
+    }
+}
+
+
+
+// 효과음 파일 경로 설정
+const soundEffects = {
+    "1": new Audio("sound1.mp3"),
+    "2": new Audio("sound2.mp3"),
+    "3": new Audio("sound3.mp3"),
+    "0": new Audio("sound0.mp3")
+};
+
+
+
+// 모든 오디오 파일이 로드되도록 설정
+Object.values(soundEffects).forEach(audio => {
+    audio.load(); // 오디오 미리 로드
+});
+
+        
+// 효과음 중첩 재생을 위해 새로운 오디오 객체를 생성하는 함수
+// 효과음을 빠르게 재생하기 위한 함수
+function playSound(soundKey) {
+    if (soundEffects[soundKey]) {
+        let soundClone = soundEffects[soundKey].cloneNode(); // 새로운 인스턴스 생성
+        soundClone.play().catch(error => console.log("오디오 재생 오류:", error));
+    }
+}
+
+// 버튼에 즉시 입력 및 효과음 재생 이벤트 추가
+
+
+
+async function loadUserInfo() {
+    if (!nickname) {
+        document.getElementById("user-info").innerText = "닉네임을 설정해주세요.";
+        return;
+    }
+
+    const userRef = doc(db, "game_results", nickname);
+    const userSnap = await getDoc(userRef);
+    
+    let userRound = 0;
+    let totalPlayers = 0;
+    let userRank = "데이터 없음";
+
+    // 유저 최고 라운드 가져오기
+    if (userSnap.exists()) {
+        userRound = userSnap.data().round;
+    }
+
+    // 전체 유저 랭킹 가져오기
+    const rankingRef = collection(db, "game_results");
+    const rankingQuery = query(rankingRef, orderBy("round", "desc"));
+    const rankingSnapshot = await getDocs(rankingQuery);
+
+    totalPlayers = rankingSnapshot.size;
+
+    let rank = 1;
+    for (const doc of rankingSnapshot.docs) {
+        if (doc.id === nickname) {
+            userRank = rank;
+            break;
+        }
+        rank++;
+    }
+
+    document.getElementById("user-info").innerHTML = `
+        <strong>닉네임:</strong> ${nickname} <br>
+        <strong>최고 라운드:</strong> ${userRound} <br>
+        <strong>랭킹:</strong> 전체 ${totalPlayers}명 중 <span style="color: blue;">${userRank}등</span>
+    `;
+}
+
+
+
+
+
+async function loadUserRecord() {
+    if (!nickname) return; // 닉네임이 없으면 실행 안 함
+
+    const userRef = doc(db, "game_results", nickname);
+    const userSnap = await getDoc(userRef);
+
+    if (userSnap.exists()) {
+        const userData = userSnap.data();
+        document.getElementById("user-info").innerHTML = 
+            `닉네임: <b>${nickname}</b><br>최고 라운드: <b>${userData.round}</b>`;
+    } else {
+        document.getElementById("user-info").innerHTML = 
+            `닉네임: <b>${nickname}</b><br>최고 라운드: <b>기록 없음</b>`;
+    }
+}
+
+
+
+
+        
+        
+        let backgroundMusic = new Audio("game-music.mp3"); // 오디오 파일 로드
+backgroundMusic.loop = true; // 반복 재생 설정
+
+function startGame() {
+    if (!promptNickname()) return;
+    if (gameActive) {
+        alert("이미 게임이 진행 중입니다.");
+        return;
+    }
+
+    gameActive = true;
+    round = 0;
+    inputSequence = "";
+    document.getElementById("start-buttons").style.display = "none";
+    generateQuestion();
+
+    // 게임이 시작될 때 음악 재생
+    backgroundMusic.play().catch(error => {
+        console.log("자동 재생이 차단됨. 유저 입력 후 재생 필요", error);
+    });
+    
+   // 사용자 기록 업데이트
+    loadUserRecord();
+    loadUserInfo();
+}
+
+// 페이지 로드 시 랭킹 & 사용자 기록 불러오기
+loadRanking();
+loadUserInfo();
+
+        function getPatternLength() {
+            return 18 + Math.floor(round / 5) * 2;
+        }
+
+        function formatPattern(pattern) {
+    return pattern
+        .split('')
+        .map((num) => `<span class="pattern" data-value="${num}">${num}</span>`)
+        .reduce((acc, curr, index) => acc + curr + ((index + 1) % 6 === 0 ? "<br>" : " "), "");
+}
+
+        let reactionTimes = [];
+let firstReactionTimes = [];
+let roundStartTime;
+let lastInputTime;
+
+/**
+ * 반응속도 기록을 초기화하고 새로운 라운드를 시작할 때 시간을 저장
+ */
+
+
+ function generateQuestion() {
+    clearTimeout(timer);
+    resetTimerBar();
+    
+    roundStartTime = Date.now(); // 라운드 시작 시간 저장
+    lastInputTime = null; // 마지막 입력 시간 초기화
+    
+    let length = getPatternLength();
+    let pattern = [];
+    let remainingLength = length;
+    
+    // 첫 번째 숫자는 0이 아닐 수도 있도록 변경
+    if (remainingLength > 0) {
+        let firstNum;
+        do {
+            firstNum = colorsPig[Math.floor(Math.random() * colorsPig.length)];
+        } while (firstNum === "0");
+        pattern.push(firstNum);
+        remainingLength -= 1;
+    }
+    
+    while (remainingLength > 0) {
+        if (remainingLength > 2 && Math.random() < 0.4) { // 0이 출현하는 빈도를 약간 낮춤
+            let maxZeroGroupSize = Math.min(8, Math.floor(remainingLength / 2) * 2); // 최대 8개의 0만 허용
+            let zeroGroupSize = Math.min((Math.floor(Math.random() * (maxZeroGroupSize / 2)) + 1) * 2, remainingLength - 2); // 짝수 개수의 0
+            if (zeroGroupSize > 0) {
+                pattern.push(...Array(zeroGroupSize).fill("0"));
+                remainingLength -= zeroGroupSize;
+            }
+        }
+        
+        if (remainingLength > 0) {
+            let randomNum;
+            let attempts = 0;
+            do {
+                randomNum = colorsPig[Math.floor(Math.random() * colorsPig.length)];
+                attempts++;
+            } while (
+                (pattern.length >= 2 && pattern[pattern.length - 1] === "1" && pattern[pattern.length - 2] === "2" && randomNum === "3") ||
+                (pattern.length >= 2 && pattern[pattern.length - 1] === randomNum && pattern[pattern.length - 2] === randomNum)
+            );
+            
+            pattern.push(randomNum);
+            remainingLength -= 1;
+        }
+    }
+    
+    // 0의 개수가 홀수면 마지막 0 제거
+    let zeroCount = pattern.filter(num => num === "0").length;
+    if (zeroCount % 2 !== 0) {
+        let lastZeroIndex = pattern.lastIndexOf("0");
+        if (lastZeroIndex !== -1) {
+            pattern.splice(lastZeroIndex, 1);
+            remainingLength += 1;
+        }
+    }
+    
+    // 배열의 크기를 정확히 length로 맞춤
+    while (pattern.length < length) {
+        let randomNum;
+        do {
+            randomNum = colorsPig[Math.floor(Math.random() * colorsPig.length)];
+        } while (
+            (pattern.length >= 2 && pattern[pattern.length - 1] === "1" && pattern[pattern.length - 2] === "2" && randomNum === "3") ||
+            (pattern.length >= 2 && pattern[pattern.length - 1] === randomNum && pattern[pattern.length - 2] === randomNum)
+        );
+        pattern.push(randomNum);
+    }
+    while (pattern.length > length) {
+        pattern.pop();
+    }
+    
+    currentAnswer = pattern.join("");
+    
+    document.getElementById("output").innerHTML = formatPattern(currentAnswer);
+    inputSequence = "";
+    renderButtons();
+    startTimer();
+}
+
+
+
+
+
+
+
+
+
+function addImmediateInputEvent(button, value) {
+    button.onmousedown = () => {
+        handleInput(value);
+        playSound(value); // 버튼 클릭 시 효과음 즉시 재생
+    };
+    button.ontouchstart = (e) => {
+        e.preventDefault(); // 모바일에서 터치 중복 실행 방지
+        handleInput(value);
+        playSound(value);
+    };
+}
+
+
+function renderButtons() {
+    let container = document.getElementById("button-container");
+    container.innerHTML = "";
+
+    // 3 버튼 래퍼
+    let btnGroup = document.createElement("div");
+    btnGroup.style.display = "flex";
+    btnGroup.style.flexDirection = "column";
+    btnGroup.style.alignItems = "center";
+
+    let btn3Wrapper = document.createElement("div");
+    btn3Wrapper.style.width = "72px"; 
+    btn3Wrapper.style.height = "72px";
+    btn3Wrapper.style.display = "flex";
+    btn3Wrapper.style.justifyContent = "center";
+    btn3Wrapper.style.alignItems = "center";
+
+    let btn3 = document.createElement("button");
+    btn3.innerText = "3";
+    btn3.classList.add("game-button", "button-3");
+    addImmediateInputEvent(btn3, "3");
+    btn3Wrapper.appendChild(btn3);
+    btnGroup.appendChild(btn3Wrapper);
+
+    // 1, 2번 버튼 래퍼 (좌우 반전: 2가 왼쪽, 1이 오른쪽)
+    let rowNumbers = document.createElement("div");
+    rowNumbers.style.display = "flex";
+    rowNumbers.style.gap = "20px"; // 버튼 사이 간격 유지
+
+    let btn1Wrapper = document.createElement("div");
+    btn1Wrapper.style.width = "72px";
+    btn1Wrapper.style.height = "72px";
+    btn1Wrapper.style.display = "flex";
+    btn1Wrapper.style.justifyContent = "center";
+    btn1Wrapper.style.alignItems = "center";
+
+    let btn1 = document.createElement("button");
+    btn1.innerText = "1";
+    btn1.classList.add("game-button", "button-1");
+    addImmediateInputEvent(btn1, "1");
+    btn1Wrapper.appendChild(btn1);
+
+    let btn2Wrapper = document.createElement("div");
+    btn2Wrapper.style.width = "72px";
+    btn2Wrapper.style.height = "72px";
+    btn2Wrapper.style.display = "flex";
+    btn2Wrapper.style.justifyContent = "center";
+    btn2Wrapper.style.alignItems = "center";
+
+    let btn2 = document.createElement("button");
+    btn2.innerText = "2";
+    btn2.classList.add("game-button", "button-2");
+    addImmediateInputEvent(btn2, "2");
+    btn2Wrapper.appendChild(btn2);
+
+    // 순서를 바꿔 추가 (원래 1 -> 2였는데 2 -> 1로 변경)
+    rowNumbers.appendChild(btn2Wrapper);
+    rowNumbers.appendChild(btn1Wrapper);
+    btnGroup.appendChild(rowNumbers);
+
+    // 하단 0번 버튼 래퍼 (배치 변경)
+    let rowBottom = document.createElement("div");
+    rowBottom.style.display = "flex";
+    rowBottom.style.alignItems = "center";
+    rowBottom.style.justifyContent = "space-between";
+    rowBottom.style.width = "300px";
+
+    let btn0Wrapper = document.createElement("div");
+    btn0Wrapper.style.width = "72px";
+    btn0Wrapper.style.height = "72px";
+    btn0Wrapper.style.display = "flex";
+    btn0Wrapper.style.justifyContent = "center";
+    btn0Wrapper.style.alignItems = "center";
+    btn0Wrapper.style.marginBottom = "-75px"; 
+
+    let btn0 = document.createElement("button");
+    btn0.innerText = "0";
+    btn0.classList.add("game-button", "button-0");
+    addImmediateInputEvent(btn0, "0");
+    btn0Wrapper.appendChild(btn0);
+
+    // 좌우 반전된 순서로 추가
+    rowBottom.appendChild(btn0Wrapper); // 왼쪽에 0번 버튼
+    let spacer = document.createElement("div");
+    spacer.style.width = "300px"; 
+    rowBottom.appendChild(spacer);
+    rowBottom.appendChild(btnGroup); // 오른쪽에 숫자 그룹
+
+    container.appendChild(rowBottom);
+}
+
+
+
+
+
+        /**
+ * 버튼을 누를 때 반응속도 측정
+ */
+let nextRoundPending = false; // 새로운 변수 추가
+
+function handleInput(input) {
+    if (!gameActive || nextRoundPending) return; // '통과!' 상태일 때 입력 차단
+
+    let currentTime = Date.now();
+    if (!lastInputTime) {
+        firstReactionTimes.push(currentTime - roundStartTime);
+    } else {
+        reactionTimes.push(currentTime - lastInputTime);
+    }
+    lastInputTime = currentTime;
+
+    inputSequence += input;
+
+    let patternElements = document.querySelectorAll(".pattern");
+    if (inputSequence.length <= patternElements.length) {
+        let targetElement = patternElements[inputSequence.length - 1];
+        targetElement.classList.add("correct");
+    }
+
+    if (inputSequence === currentAnswer) {
+        clearTimeout(timer);
+        round++;
+
+        // 첫 반응속도 및 평균 반응속도 계산
+        let firstReaction = firstReactionTimes[firstReactionTimes.length - 1] || 0;
+        let avgReaction = reactionTimes.length > 0 ? 
+            Math.floor(reactionTimes.reduce((a, b) => a + b, 0) / reactionTimes.length) : 0;
+
+        document.getElementById("output").innerHTML = `통과! Round: ${round}<br>
+            첫 반응속도: ${firstReaction} ms<br>
+            평균속도: ${avgReaction} ms`;
+
+        nextRoundPending = true; // 통과 메시지 표시 중 입력 차단
+
+        setTimeout(() => {
+            nextRoundPending = false; // 새로운 라운드 시작 전 입력 허용
+            generateQuestion();
+        }, 1000);
+    } else if (!currentAnswer.startsWith(inputSequence)) {
+        gameOver();
+    }
+}
+
+        function startTimer() {
+            let timerBar = document.getElementById("timer-bar");
+            clearTimeout(timer);
+            resetTimerBar();
+
+            requestAnimationFrame(() => {
+                requestAnimationFrame(() => {
+                    timerBar.style.transition = "width 5s linear";
+                    timerBar.style.width = "0%";
+                });
+            });
+
+            timer = setTimeout(gameOver, 5000);
+        }
+
+        function resetTimerBar() {
+            let timerBar = document.getElementById("timer-bar");
+            timerBar.style.transition = "none";
+            timerBar.style.width = "100%";
+        }
+
+        /**
+ * 게임 종료 후 반응속도 평균 계산 및 리포트 표시
+ */
+async function gameOver() {
+    if (!gameActive) return;
+
+    gameActive = false;
+    clearTimeout(timer);
+
+    backgroundMusic.pause();
+    backgroundMusic.currentTime = 0;
+
+    let gameOverSound = new Audio("game-over.mp3");
+    gameOverSound.play().catch(error => console.log("게임 오버 효과음 재생 오류:", error));
+
+    document.getElementById("output").innerHTML = rankingCache;
+    document.getElementById("start-buttons").style.display = "block";
+    resetTimerBar();
+
+    let avgFirstReaction = firstReactionTimes.length > 0 ? 
+        Math.floor(firstReactionTimes.reduce((a, b) => a + b, 0) / firstReactionTimes.length) : 0;
+    let avgReaction = reactionTimes.length > 0 ? 
+        Math.floor(reactionTimes.reduce((a, b) => a + b, 0) / reactionTimes.length) : 0;
+
+    document.getElementById("output").innerHTML = `
+        게임 리포트<br><br>
+        <strong>도달 라운드:</strong> ${round}<br>
+        <strong>첫 반응속도:</strong> ${avgFirstReaction} ms<br>
+        <strong>평균속도:</strong> ${avgReaction} ms
+    `;
+
+    const userRef = doc(db, "game_results", nickname);
+    const userSnap = await getDoc(userRef);
+
+    const gameRecord = {
+        nickname,
+        round,
+        play_time: new Date().toISOString(),
+        first_reaction_avg: avgFirstReaction,
+        reaction_avg: avgReaction
+    };
+
+    if (userSnap.exists()) {
+        const userData = userSnap.data();
+        const updatedPlayCount = (userData.play_count || 0) + 1;
+
+        if (round > userData.round) {
+            await setDoc(userRef, { ...userData, round, play_count: updatedPlayCount });
+        } else {
+            await setDoc(userRef, { ...userData, play_count: updatedPlayCount });
+        }
+    } else {
+        await setDoc(userRef, { nickname, round, play_count: 1 });
+    }
+
+    const historyRef = collection(db, "game_history");
+    await setDoc(doc(historyRef, `${nickname}_${Date.now()}`), gameRecord);
+    
+    await loadUserInfo();
+    await loadPlayCount(); // 플레이 횟수 업데이트
+}
+        window.startGame = startGame;
+
+        // 페이지 로드 시 랭킹 불러오기
+        loadRanking();
+    </script>
+</body>
+<footer style="position: fixed; bottom: 10px; width: 100%; text-align: center; font-size: 14px; color: black;">
+    만든이 : 갱생짐인<br>
+    후원 계좌 : 토스뱅크 1908-6892-0626<br>
+    문의 : insta @yejun0847
+</footer>
+</html>
+ 
