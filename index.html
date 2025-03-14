@@ -118,17 +118,25 @@
 
         /* 숫자별 원 색상 지정 */
         .pattern[data-value="1"]::after {
-            background-color: #0047AB; /* 파란색 */
-        }
-        .pattern[data-value="2"]::after {
-            background-color: yellowgreen; /* 녹색 */
-        }
-        .pattern[data-value="3"]::after {
-            background-color: #FF69B4; /* 핑크색 */
-        }
-        .pattern[data-value="0"]::after {
-            background-color: teal; /* 청록색 */
-        }
+    background-image: url("1번.png");
+    background-size: cover;
+}
+
+.pattern[data-value="2"]::after {
+    background-image: url("2번.png");
+    background-size: cover;
+}
+
+.pattern[data-value="3"]::after {
+    background-image: url("3번.png");
+    background-size: cover;
+}
+
+.pattern[data-value="0"]::after {
+    background-image: url("0번.png");
+    background-size: cover;
+}
+
 
         /* 기존 스타일에 추가 */
         .correct::after {
@@ -311,7 +319,7 @@ rowNumbers.style.top = "100px"; // 원하는 만큼 올리기
           ).join("<br>");
 
     // 최종 출력할 랭킹
-    rankingCache = roundRanking + playCountRanking + '<br><br><br><br>';
+    rankingCache = roundRanking + playCountRanking + '<br><br>';
 
     if (!gameActive) {
         document.getElementById("output").innerHTML = rankingCache;
