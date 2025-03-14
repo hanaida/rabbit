@@ -555,6 +555,8 @@ function renderButtons() {
     btn3Wrapper.style.display = "flex";
     btn3Wrapper.style.justifyContent = "center";
     btn3Wrapper.style.alignItems = "center";
+    btn3Wrapper.style.position = "relative";
+    btn3Wrapper.style.top = "72px"; // 3번 버튼을 72px 아래로 이동
 
     let btn3 = document.createElement("button");
     btn3.innerText = "3";
@@ -574,6 +576,8 @@ function renderButtons() {
     btn1Wrapper.style.display = "flex";
     btn1Wrapper.style.justifyContent = "center";
     btn1Wrapper.style.alignItems = "center";
+    btn1Wrapper.style.position = "relative";
+    btn1Wrapper.style.top = "-72px"; // 1번 버튼을 72px 위로 이동
 
     let btn1 = document.createElement("button");
     btn1.innerText = "1";
@@ -587,6 +591,8 @@ function renderButtons() {
     btn2Wrapper.style.display = "flex";
     btn2Wrapper.style.justifyContent = "center";
     btn2Wrapper.style.alignItems = "center";
+    btn2Wrapper.style.position = "relative";
+    btn2Wrapper.style.top = "-72px"; // 2번 버튼을 72px 위로 이동
 
     let btn2 = document.createElement("button");
     btn2.innerText = "2";
@@ -629,6 +635,8 @@ function renderButtons() {
 
     container.appendChild(rowBottom);
 }
+
+
 
 
 
