@@ -321,7 +321,7 @@ rowNumbers.style.top = "100px"; // 원하는 만큼 올리기
 
     const playCountRanking = playCountSnapshot.empty
         ? ""
-        : `<br><br><span style="font-size: 20px; font-weight: bold;">🎮 판수 부문</span><br><span style="color: black; font-size: 12px;">랭킹 보상(일요일 지급) - 1위 : 깜엽 2-3위 : 주엽 4-5위 : 고일</span><br><br>` + 
+        : `<br><br><span style="font-size: 20px; font-weight: bold;">🎮 판수 부문</span><br><br>` + 
           Array.from(playCountSnapshot.docs, (doc, index) => 
               `${index + 1}위: ${doc.data().nickname} - ${doc.data().play_count}판`
           ).join("<br>");
