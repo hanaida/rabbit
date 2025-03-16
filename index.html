@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>떡치기-토끼</title>
+    <title>떡치기-돼지</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -36,123 +36,137 @@
             margin-bottom: 20px;
         }
         .game-button {
-            width: 60px;
-            height: 60px;
-            font-size: 24px;
-            padding: 10px;
-            border-radius: 50%;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            
-            transform: scale(1.2);
-            margin: 5px; /* 버튼 간 여백 추가 */
-        }
+    width: 60px;
+    height: 60px;
+    font-size: 24px;
+    padding: 10px;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    
+    transform: scale(1.2);
+    margin: 5px; /* 버튼 간 여백 추가 */
+}
 
 
         .button-1 {
-            background-image: url('1번.png');
-            background-size: cover;
-            background-position: center;
-            border: none;
-            outline: none;
-            box-shadow: none;
-            color: transparent;
-            filter: brightness(1.2);
-        }
+    background-image: url('yellow.png');
+    background-size: cover;
+    background-position: center;
+    border: none;
+    outline: none;
+    box-shadow: none;
+    color: transparent;
+    filter: brightness(1.2);
+}
 
-        .button-2 {
-            background-image: url('2번.png');
-            background-size: cover;
-            background-position: center;
-            border: none;
-            outline: none;
-            box-shadow: none;
-            color: transparent;
-            filter: brightness(1.2);
-        }
+.button-2 {
+    background-image: url('orange.png');
+    background-size: cover;
+    background-position: center;
+    border: none;
+    outline: none;
+    box-shadow: none;
+    color: transparent;
+    filter: brightness(1.2);
+}
 
-        .button-3 {
-            background-image: url('3번.png');
-            background-size: cover;
-            background-position: center;
-            border: none;
-            outline: none;
-            box-shadow: none;
-            color: transparent;
-            filter: brightness(1.2);
-        }
+.button-3 {
+    background-image: url('red.png');
+    background-size: cover;
+    background-position: center;
+    border: none;
+    outline: none;
+    box-shadow: none;
+    color: transparent;
+    filter: brightness(1.2);
+}
 
-        .button-0 {
+.button-0 {
 
-            background-image: url('0번.png');
-            background-size: cover;
-            background-position: center;
-            border: none;
-            outline: none;
-            box-shadow: none;
-            color: transparent;
-            position: relative;
-            left: -15px;
-            outline: none; /* 포커스 시 외곽선 제거 */
-            box-shadow: none; /* 그림자 제거 */
-            filter: brightness(1.2);
-        }
+    background-image: url('purple.png');
+    background-size: cover;
+    background-position: center;
+    border: none;
+    outline: none;
+    box-shadow: none;
+    color: transparent;
+    position: relative;
+    left: -15px;
+    outline: none; /* 포커스 시 외곽선 제거 */
+    box-shadow: none; /* 그림자 제거 */
+    filter: brightness(1.2);
+}
 
-        .pattern {
-            position: relative;
-            display: inline-block;
-            width: 26px; /* 기존 24px → 26px (좌우 간격 증가) */
-            text-align: center;
-            margin-right: 4px; /* 숫자 사이 간격 증가 */
-            margin-bottom: 12px; /* 기존보다 약간만 아래쪽 간격 증가 */
-            font-size: 0;
-        }
+.pattern {
+    position: relative;
+    display: inline-block;
+    width: 26px; /* 기존 24px → 26px (좌우 간격 증가) */
+    text-align: center;
+    margin-right: 4px; /* 숫자 사이 간격 증가 */
+    margin-bottom: 12px; /* 기존보다 약간만 아래쪽 간격 증가 */
+    font-size: 0;
+}
 
-        .pattern::after {
-            content: "";
-            position: absolute;
-            bottom: 0px; /* 숫자 자리에 배치 */
-            left: 50%;
-            transform: translateX(-50%);
-            width: 34px;  /* 작은 원 크기 */
-            height: 34px;
-            border-radius: 50%; /* 원형 */
-        }
+.pattern::after {
+    content: "";
+    position: absolute;
+    bottom: 0px; /* 숫자 자리에 배치 */
+    left: 50%;
+    transform: translateX(-50%);
+    width: 34px;  /* 작은 원 크기 */
+    height: 34px;
+    border-radius: 50%; /* 원형 */
+}
 
-        /* 숫자별 원 색상 지정 */
-        .pattern[data-value="1"]::after {
-    background-image: url("1번.png");
+/* 숫자별 원 색상 지정 */
+.pattern[data-value="1"]::after {
+    background-image: url("yellow.png");
     background-size: cover;
     filter: brightness(1.2);
 }
 
 .pattern[data-value="2"]::after {
-    background-image: url("2번.png");
+    background-image: url("orange.png");
     background-size: cover;
     filter: brightness(1.2);
 }
 
 .pattern[data-value="3"]::after {
-    background-image: url("3번.png");
+    background-image: url("red.png");
     background-size: cover;
     filter: brightness(1.2);
 }
 
 .pattern[data-value="0"]::after {
-    background-image: url("0번.png");
+    background-image: url("purple.png");
     background-size: cover;
     filter: brightness(1.2);
 }
 
+/*
+.pattern[data-value="1"]::after {
+    background-color: yellow;
+}
+.pattern[data-value="2"]::after {
+    background-color: orange;
+}
+.pattern[data-value="3"]::after {
+    background-color: red;
+}
+.pattern[data-value="0"]::after {
+    background-color: purple;
+}
+*/
 
-        /* 기존 스타일에 추가 */
-        .correct::after {
-            filter: brightness(200%);
-            opacity: 0.6;
-            border: 2px solid #00aa00; /* 진한 초록색 테두리 */
-            box-shadow: 0 0 10px rgba(0, 255, 0, 0.8); /* 밝은 초록색 테두리 강조 효과 */
-        }
+/* 기존 스타일에 추가 */
+.correct::after {
+    filter: brightness(200%);
+    opacity: 0.6;
+    border: 2px solid #00aa00; /* 진한 초록색 테두리 */
+    box-shadow: 0 0 10px rgba(0, 255, 0, 0.8); /* 밝은 초록색 테두리 강조 효과 */
+}
 
 
 
@@ -196,7 +210,7 @@
 </head>
 <body>
     <div id="timer-bar"></div>
-    <h1>떡치기-토끼</h1>
+    <h1>떡치기-돼지</h1>
 
     <div id="start-buttons">
         <p id="user-info">사용자 정보를 불러오는 중...</p>
@@ -205,8 +219,9 @@
         <div style="display: flex; justify-content: center; gap: 10px;">
             <button id="start-button">게임 시작</button>
             <button id="nickname-button">닉네임 변경</button>
-            <button id="pig-button">돼지</button>
+            <button id="pig-button">토끼</button>
         </div>
+        
 
         <p id="play-count">플레이 기록 불러오는 중...</p> <!-- 추가된 문구 -->
     </div>
@@ -217,26 +232,21 @@
     </div>
 
     <script type="module">
-        // Import the functions you need from the SDKs you need
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.4.0/firebase-app.js";
         import { getFirestore, setDoc, getDoc, doc, collection, query, orderBy, limit, getDocs } from "https://www.gstatic.com/firebasejs/11.4.0/firebase-firestore.js";
-        // TODO: Add SDKs for Firebase products that you want to use
-        // https://firebase.google.com/docs/web/setup#available-libraries
-      
-        // Your web app's Firebase configuration
+
         const firebaseConfig = {
-          apiKey: "AIzaSyCqEtavkrRLd8zSLSTRNKB4aSDpo_dRXFw",
-          authDomain: "rabbit-fe7c9.firebaseapp.com",
-          projectId: "rabbit-fe7c9",
-          storageBucket: "rabbit-fe7c9.firebasestorage.app",
-          messagingSenderId: "8805323656",
-          appId: "1:8805323656:web:19bfc7adab21c09fe2a03d"
+            apiKey: "AIzaSyC1RCO59Qr1ogsZ1GNwxY9O2KGgMaFMyUM",
+            authDomain: "mafia-5c957.firebaseapp.com",
+            databaseURL: "https://mafia-5c957-default-rtdb.firebaseio.com",
+            projectId: "mafia-5c957",
+            storageBucket: "mafia-5c957.firebasestorage.app",
+            messagingSenderId: "979859367108",
+            appId: "1:979859367108:web:6f94ed2e25ca82d762d591"
         };
-      
-        // Initialize Firebase
+
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
-
         let rowNumbers = document.createElement("div");
 rowNumbers.style.display = "flex";
 rowNumbers.style.justifyContent = "space-between";
@@ -280,7 +290,7 @@ rowNumbers.style.top = "100px"; // 원하는 만큼 올리기
             document.getElementById("start-button").addEventListener("click", startGame);
              // 돼지 버튼 클릭 시 URL 이동
              document.getElementById("pig-button").addEventListener("click", function () {
-                window.location.href = "https://hanaida.github.io/mafia42/";
+                window.location.href = "https://hanaida.github.io/rabbit/";
             });
         });
 
@@ -309,8 +319,8 @@ rowNumbers.style.top = "100px"; // 원하는 만큼 올리기
 
     const roundRanking = roundSnapshot.empty 
         ? "아직 랭킹 정보가 없습니다."
-        : `<span style="color: red; font-weight: bold; font-size: 35px;">토끼의 전당</span><br><br>
-           <span style="font-size: 20px; font-weight: bold;">🐰 라운드 부문</span><br><span style="color: black; font-size: 12px;">랭킹 보상(일요일 지급) - 1위 : 깜주 2-3위 : 깜엽 4-5위 : 주엽</span><br><br>` + 
+        : `<span style="color: red; font-weight: bold; font-size: 35px;">돼지의 전당</span><br><br>
+           <span style="font-size: 20px; font-weight: bold;">🐷 라운드 부문</span><br><span style="color: black; font-size: 12px;">랭킹 보상(일요일 지급) - 1위 : 깜주 2-3위 : 깜엽 4-5위 : 주엽</span><br><br>` + 
           Array.from(roundSnapshot.docs, (doc, index) => 
               `${index + 1}위: ${doc.data().nickname} - ${doc.data().round} round`
           ).join("<br>");
@@ -327,7 +337,7 @@ rowNumbers.style.top = "100px"; // 원하는 만큼 올리기
           ).join("<br>");
 
     // 최종 출력할 랭킹
-    rankingCache = roundRanking + playCountRanking + '<br><br>';
+    rankingCache = roundRanking + playCountRanking + '<br><br><br><br>';
 
     if (!gameActive) {
         document.getElementById("output").innerHTML = rankingCache;
@@ -335,13 +345,11 @@ rowNumbers.style.top = "100px"; // 원하는 만큼 올리기
 }
 
 
-
-
 // 효과음 파일 경로 설정
 const soundEffects = {
-    "1": new Audio("sound4.mp3"),
-    "2": new Audio("sound5.mp3"),
-    "3": new Audio("sound6.mp3"),
+    "1": new Audio("sound1.mp3"),
+    "2": new Audio("sound2.mp3"),
+    "3": new Audio("sound3.mp3"),
     "0": new Audio("sound0.mp3")
 };
 
@@ -425,14 +433,10 @@ async function loadUserRecord() {
         document.getElementById("user-info").innerHTML = 
             `닉네임: <b>${nickname}</b><br>최고 라운드: <b>기록 없음</b>`;
     }
+
 }
 
-
-
-
-        
-        
-        let backgroundMusic = new Audio("game-music.mp3"); // 오디오 파일 로드
+let backgroundMusic = new Audio("game-music.mp3"); // 오디오 파일 로드
 backgroundMusic.loop = true; // 반복 재생 설정
 
 function startGame() {
@@ -475,9 +479,7 @@ let lastInputTime;
 /**
  * 반응속도 기록을 초기화하고 새로운 라운드를 시작할 때 시간을 저장
  */
-
-
- function generateQuestion() {
+function generateQuestion() {
     clearTimeout(timer);
     resetTimerBar();
     
@@ -485,85 +487,15 @@ let lastInputTime;
     lastInputTime = null; // 마지막 입력 시간 초기화
     
     let length = getPatternLength();
-    let pattern = [];
-    let remainingLength = length;
-    
-    // 첫 번째 숫자는 0이 아닐 수도 있도록 변경
-    if (remainingLength > 0) {
-        let firstNum;
-        do {
-            firstNum = colorsPig[Math.floor(Math.random() * colorsPig.length)];
-        } while (firstNum === "0");
-        pattern.push(firstNum);
-        remainingLength -= 1;
-    }
-    
-    while (remainingLength > 0) {
-        if (remainingLength > 2 && Math.random() < 0.4) { // 0이 출현하는 빈도를 약간 낮춤
-            let maxZeroGroupSize = Math.min(8, Math.floor(remainingLength / 2) * 2); // 최대 8개의 0만 허용
-            let zeroGroupSize = Math.min((Math.floor(Math.random() * (maxZeroGroupSize / 2)) + 1) * 2, remainingLength - 2); // 짝수 개수의 0
-            if (zeroGroupSize > 0) {
-                pattern.push(...Array(zeroGroupSize).fill("0"));
-                remainingLength -= zeroGroupSize;
-            }
-        }
-        
-        if (remainingLength > 0) {
-            let randomNum;
-            let attempts = 0;
-            do {
-                randomNum = colorsPig[Math.floor(Math.random() * colorsPig.length)];
-                attempts++;
-            } while (
-                (pattern.length >= 2 && pattern[pattern.length - 1] === "1" && pattern[pattern.length - 2] === "2" && randomNum === "3") ||
-                (pattern.length >= 2 && pattern[pattern.length - 1] === randomNum && pattern[pattern.length - 2] === randomNum)
-            );
-            
-            pattern.push(randomNum);
-            remainingLength -= 1;
-        }
-    }
-    
-    // 0의 개수가 홀수면 마지막 0 제거
-    let zeroCount = pattern.filter(num => num === "0").length;
-    if (zeroCount % 2 !== 0) {
-        let lastZeroIndex = pattern.lastIndexOf("0");
-        if (lastZeroIndex !== -1) {
-            pattern.splice(lastZeroIndex, 1);
-            remainingLength += 1;
-        }
-    }
-    
-    // 배열의 크기를 정확히 length로 맞춤
-    while (pattern.length < length) {
-        let randomNum;
-        do {
-            randomNum = colorsPig[Math.floor(Math.random() * colorsPig.length)];
-        } while (
-            (pattern.length >= 2 && pattern[pattern.length - 1] === "1" && pattern[pattern.length - 2] === "2" && randomNum === "3") ||
-            (pattern.length >= 2 && pattern[pattern.length - 1] === randomNum && pattern[pattern.length - 2] === randomNum)
-        );
-        pattern.push(randomNum);
-    }
-    while (pattern.length > length) {
-        pattern.pop();
-    }
-    
-    currentAnswer = pattern.join("");
-    
+    currentAnswer = Array.from({ length: length }, (_, i) => 
+        (i % 2 === 0 ? colorsPig[Math.floor(Math.random() * colorsPig.length)] : "0")
+    ).join("");
+
     document.getElementById("output").innerHTML = formatPattern(currentAnswer);
     inputSequence = "";
     renderButtons();
     startTimer();
 }
-
-
-
-
-
-
-
-
 
 function addImmediateInputEvent(button, value) {
     button.onmousedown = () => {
@@ -589,13 +521,11 @@ function renderButtons() {
     btnGroup.style.alignItems = "center";
 
     let btn3Wrapper = document.createElement("div");
-    btn3Wrapper.style.width = "72px"; 
+    btn3Wrapper.style.width = "72px";   // 원래 버튼 크기 60px * 1.2
     btn3Wrapper.style.height = "72px";
     btn3Wrapper.style.display = "flex";
     btn3Wrapper.style.justifyContent = "center";
     btn3Wrapper.style.alignItems = "center";
-    btn3Wrapper.style.position = "relative";
-    btn3Wrapper.style.top = "72px"; // 3번 버튼을 72px 아래로 이동
 
     let btn3 = document.createElement("button");
     btn3.innerText = "3";
@@ -604,10 +534,10 @@ function renderButtons() {
     btn3Wrapper.appendChild(btn3);
     btnGroup.appendChild(btn3Wrapper);
 
-    // 1, 2번 버튼 래퍼 (좌우 반전: 2가 왼쪽, 1이 오른쪽)
+    // 1, 2번 버튼 래퍼 (수평 배열)
     let rowNumbers = document.createElement("div");
     rowNumbers.style.display = "flex";
-    rowNumbers.style.gap = "20px"; // 버튼 사이 간격 유지
+    rowNumbers.style.gap = "20px"; // 버튼 사이에 간격 추가
 
     let btn1Wrapper = document.createElement("div");
     btn1Wrapper.style.width = "72px";
@@ -615,8 +545,6 @@ function renderButtons() {
     btn1Wrapper.style.display = "flex";
     btn1Wrapper.style.justifyContent = "center";
     btn1Wrapper.style.alignItems = "center";
-    btn1Wrapper.style.position = "relative";
-    btn1Wrapper.style.top = "-72px"; // 1번 버튼을 72px 위로 이동
 
     let btn1 = document.createElement("button");
     btn1.innerText = "1";
@@ -630,8 +558,6 @@ function renderButtons() {
     btn2Wrapper.style.display = "flex";
     btn2Wrapper.style.justifyContent = "center";
     btn2Wrapper.style.alignItems = "center";
-    btn2Wrapper.style.position = "relative";
-    btn2Wrapper.style.top = "-72px"; // 2번 버튼을 72px 위로 이동
 
     let btn2 = document.createElement("button");
     btn2.innerText = "2";
@@ -639,17 +565,22 @@ function renderButtons() {
     addImmediateInputEvent(btn2, "2");
     btn2Wrapper.appendChild(btn2);
 
-    // 순서를 바꿔 추가 (원래 1 -> 2였는데 2 -> 1로 변경)
-    rowNumbers.appendChild(btn2Wrapper);
     rowNumbers.appendChild(btn1Wrapper);
+    rowNumbers.appendChild(btn2Wrapper);
     btnGroup.appendChild(rowNumbers);
 
-    // 하단 0번 버튼 래퍼 (배치 변경)
+    // 하단 0번 버튼 래퍼
     let rowBottom = document.createElement("div");
     rowBottom.style.display = "flex";
     rowBottom.style.alignItems = "center";
     rowBottom.style.justifyContent = "space-between";
     rowBottom.style.width = "300px";
+
+    rowBottom.appendChild(btnGroup);
+
+    let spacer = document.createElement("div");
+    spacer.style.width = "300px"; // 좌우 간격
+    rowBottom.appendChild(spacer);
 
     let btn0Wrapper = document.createElement("div");
     btn0Wrapper.style.width = "72px";
@@ -657,28 +588,17 @@ function renderButtons() {
     btn0Wrapper.style.display = "flex";
     btn0Wrapper.style.justifyContent = "center";
     btn0Wrapper.style.alignItems = "center";
-    btn0Wrapper.style.marginBottom = "-75px"; 
-    btn0Wrapper.style.marginLeft = "36px"; // 0번 버튼을 36px 오른쪽으로 이동
+    btn0Wrapper.style.marginBottom = "-75px"; // 보라색 버튼
 
     let btn0 = document.createElement("button");
     btn0.innerText = "0";
     btn0.classList.add("game-button", "button-0");
     addImmediateInputEvent(btn0, "0");
     btn0Wrapper.appendChild(btn0);
-
-    // 좌우 반전된 순서로 추가
-    rowBottom.appendChild(btn0Wrapper); // 왼쪽에 0번 버튼
-    let spacer = document.createElement("div");
-    spacer.style.width = "300px"; 
-    rowBottom.appendChild(spacer);
-    rowBottom.appendChild(btnGroup); // 오른쪽에 숫자 그룹
+    rowBottom.appendChild(btn0Wrapper);
 
     container.appendChild(rowBottom);
 }
-
-
-
-
 
 
 
@@ -806,7 +726,7 @@ async function gameOver() {
     } else {
         await setDoc(userRef, { nickname, round, play_count: 1 });
     }
-    
+
     const historyRef = collection(db, "game_history");
     await setDoc(doc(historyRef, `${nickname}_${Date.now()}`), gameRecord);
     
